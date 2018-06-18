@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">CodeX</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="stable">Stable and Secured</string>
+    <string name="about">About</string>
+    <string name="home">Home</string>
+    <string name="changelog">Changelog</string>
+    <string name="downloads">Download Zip</string>
+    <string name="settings">Settings</string>
+    <string name="flash">Flash Kernel</string>
+    <string name="check_for_updates">Check for updates</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="device_info">" "Device Information</string>
+    <string name="device">Device:</string>
+    <string name="model">Model:</string>
+    <string name="kernel">Kernel:</string>
+    <string name="about_kernel">CodeX makes your device even snappier than before. Being a battery and performance balanced kernel it never compromises on stability. You know why? Cause your device deserves it!</string>
+    <string name="fork_github">Fork my source on GitHub</string>
+    <string name="app_version">App Version:</string>
+    <string name="xda_developers">XDA Developers</string>
+    <string name="codexinfo_xda">CodeX Kernel thread on XDA forums for your device. General discussions, support and FAQs</string>
+    <string name="direct_support">Direct Support</string>
+    <string name="direct_support_info">Text me if you have any concern or suggestion about CodeX Kernel or Updater</string>
+    <string name="changelog_json">Changelog_JSON</string>
+    <string name="install_apk">Install APK</string>
+
+    <!-- Keys for SharedPreferences -->
+    <string name="key_custom_pref">Custom_preference</string>
+    <string name="key_check_updates">check_updates</string>
+    <string name="key_wifi_only">wifi_only</string>
+    <string name="key_auto_updates">auto_updates</string>
+
+    <!-- Strings related to Settings -->
+    <string name="new_updates">Check Updates</string>
+    <string name="new_updates_desc">Check updates on the first launch of the app</string>
+    <string name="on_wifi_only">Downloads On WiFi Only</string>
+    <string name="wifi_only_desc">Updates will be downloaded only when a WiFi connection is available</string>
+    <string name="auto_update">Auto Download Updates</string>
+    <string name="auto_update_desc">Updates will be downloaded automatically</string>
+</resources>

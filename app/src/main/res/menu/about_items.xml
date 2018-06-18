@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/about_check_for_updates"
+        android:title="@string/check_for_updates" />
+    <item
+        android:id="@+id/install_packages"
+        android:title="@string/install_apk" />
+</menu>

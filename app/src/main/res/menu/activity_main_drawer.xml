@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item
+        android:id="@+id/nav_changelog"
+        android:icon="@drawable/round_list_white_24"
+        android:title="@string/changelog" />
+    <item
+        android:id="@+id/nav_downloads"
+        android:icon="@drawable/round_get_app_white_24"
+        android:title="@string/downloads" />
+
+    <item
+        android:id="@+id/nav_flash"
+        android:icon="@drawable/round_flash_on_white_24"
+        android:title="@string/flash" />
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/round_settings_white_24"
+        android:title="@string/settings" />
+    <item
+        android:id="@+id/nav_about"
+        android:icon="@drawable/round_error_outline_white_24"
+        android:title="@string/about" />
+</menu>
