@@ -24,7 +24,7 @@ import java.io.IOException
 
 class AboutActivity : AppCompatActivity() {
 
-    val APP_VERSION = "1.0"
+    val APP_VERSION = "1.1"
     val URL = "https://raw.githubusercontent.com/AxelBlaz3/Codex-Kernel/gh-pages/codex.json"
     lateinit var context: Context
 
