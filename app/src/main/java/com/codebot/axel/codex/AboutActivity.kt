@@ -25,7 +25,7 @@ import java.io.IOException
 class AboutActivity : AppCompatActivity() {
 
     val APP_VERSION = "1.1"
-    val URL = "https://raw.githubusercontent.com/AxelBlaz3/Codex-Kernel/gh-pages/codex.json"
+    val URL = "https://www.miguelndecarvalho.me/codex/codex.json"
     lateinit var context: Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +44,7 @@ class AboutActivity : AppCompatActivity() {
         about_app_ver_textView.text = Html.fromHtml("<b>${getString(R.string.app_version)}</b>" + " $APP_VERSION")
 
         about_github.setOnClickListener {
-            val githubIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.github.com/AxelBlaz3"))
+            val githubIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.github.com/MiguelNdeCarvalho"))
             startActivity(githubIntent)
         }
     }

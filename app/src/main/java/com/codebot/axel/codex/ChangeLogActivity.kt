@@ -17,7 +17,7 @@ import java.io.IOException
 
 class ChangeLogActivity : AppCompatActivity() {
 
-    val URL = "https://raw.githubusercontent.com/AxelBlaz3/Codex-Kernel/gh-pages/whyred.json"
+    val URL = "https://www.miguelndecarvalho.me/codex/whyred.json"
     lateinit var pref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {

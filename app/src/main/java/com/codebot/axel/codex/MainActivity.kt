@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val KERNEL_VERSION_FULL = System.getProperty("os.version")
     val KERNEL_VERSION = KERNEL_VERSION_FULL.substring(KERNEL_VERSION_FULL.lastIndexOf('-') + 1, KERNEL_VERSION_FULL.length)
     val KERNEL_NAME = KERNEL_VERSION_FULL.substring(KERNEL_VERSION_FULL.indexOf('-') + 1, KERNEL_VERSION_FULL.lastIndexOf('-'))
-    val URL = "https://raw.githubusercontent.com/AxelBlaz3/Codex-Kernel/gh-pages/whyred.json"
+    val URL = "https://www.miguelndecarvalho.me/codex/whyred.json"
     lateinit var preferences: SharedPreferences
     val context = this
 
@@ -106,12 +106,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             xda_constraint_layout.setOnClickListener {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://forum.xda-developers.com/redmi-note-5-pro/development/kernel-codex-kernel-v1-0-t3805198"))
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://codexxda.miguelndecarvalho.me"))
                 startActivity(browserIntent)
             }
 
             telegram_constraint_layout.setOnClickListener {
-                val telegramIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/AxelBlaz3"))
+                val telegramIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://telegram.miguelndecarvalho.me"))
                 startActivity(telegramIntent)
             }
         }

@@ -18,7 +18,7 @@ import java.io.IOException
 
 class FlashActivity : AppCompatActivity() {
 
-    val URL = "https://raw.githubusercontent.com/AxelBlaz3/Codex-Kernel/gh-pages/whyred.json"
+    val URL = "https://www.miguelndecarvalho.me/codex/whyred.json"
     val KERNEL_VERSION_FULL = System.getProperty("os.version")
     val KERNEL_VERSION = KERNEL_VERSION_FULL.substring(KERNEL_VERSION_FULL.lastIndexOf('-') + 1, KERNEL_VERSION_FULL.length)
 
