@@ -1,5 +1,9 @@
 package com.codebot.axel.codex
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -13,15 +17,19 @@ import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.text.Html
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -38,7 +46,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val KERNEL_NAME = KERNEL_VERSION_FULL.substring(KERNEL_VERSION_FULL.indexOf('-') + 1, KERNEL_VERSION_FULL.lastIndexOf('-'))
     val URL = "https://www.miguelndecarvalho.me/codex/whyred.json"
     lateinit var preferences: SharedPreferences
+    lateinit var pref: SharedPreferences
     val context = this
+    var flag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +56,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
         appBar.bringToFront()
 
-        println(KERNEL_VERSION)
+        flag = false
+        pref = getSharedPreferences(getString(R.string.key_notification_check), Context.MODE_PRIVATE)
+        val editor = pref.edit()
+        editor.putString("notification", "0")
+        editor.apply()
+
         progressBar2.visibility = View.INVISIBLE
         logo_imageView.scaleType = ImageView.ScaleType.FIT_XY
 
@@ -54,7 +69,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             alertUser()
         } else {
             // Runtime.getRuntime().exec("su")
+            preferences = PreferenceManager.getDefaultSharedPreferences(this)
 
+            if(preferences.getBoolean(getString(R.string.key_miui_check), false))
+                flag  = true
+            Log.e("flag: ", "$flag")
             isStoragePermissionGranted()
             device_textView.text = Html.fromHtml("<b>" + getString(R.string.device) + "</b>" + " " + Build.DEVICE)
             model_textView.text = Html.fromHtml("<b>" + getString(R.string.model) + "</b>" + " " + Build.MODEL)
@@ -73,7 +92,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            Toast.makeText(this, "Copied", Toast.LENGTH_LONG).show()
 //        }
 
-            preferences = PreferenceManager.getDefaultSharedPreferences(this)
+
             val autoUpdates = preferences.getBoolean(getString(R.string.key_auto_updates), false)
 
             if (preferences.getBoolean(getString(R.string.key_check_updates), true))
@@ -91,8 +110,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val bodyOfJSON = response?.body()?.string()
                         val gson = GsonBuilder().create()
                         val codexData = gson.fromJson(bodyOfJSON, CodexInfo::class.java)
+                        val url: String
+                        if(flag)
+                            url = "Okay MIUI URL set!"
+                        else
+                            url = codexData.downloads.url
+                        Log.d("Download URL: ", url)
                         runOnUiThread {
-                            DownloadTask(context, codexData.downloads.url, autoUpdates, false, progressBar2, percentage_textView)
+                            DownloadTask(context, url, autoUpdates, false, progressBar2, percentage_textView)
                         }
                     }
                 })
@@ -141,8 +166,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             val bodyOfJSON = response?.body()?.string()
                             val gson = GsonBuilder().create()
                             val codexData = gson.fromJson(bodyOfJSON, CodexInfo::class.java)
+                            val url: String
+                            if(flag)
+                                url = "Okay MIUI URL set!"
+                            else
+                                url = codexData.downloads.url
                             runOnUiThread {
-                                DownloadTask(context, codexData.downloads.url, false, false, progressBar2, percentage_textView)
+                                DownloadTask(context, url, false, false, progressBar2, percentage_textView)
                             }
                         }
                     })
@@ -190,6 +220,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun checkForUpdates(context: Context, isPopup: Boolean) {
+        println("URL: " + URL)
         if (isNetworkAvailable()) {
             if (preferences.getBoolean(getString(R.string.key_wifi_only), false)) {
                 if (isWifi()) {
@@ -233,9 +264,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     fun verifyUpdate(version: String, context: Context, isPopup: Boolean) {
-        val currentVersion = KERNEL_VERSION_FULL.substring(KERNEL_VERSION_FULL.lastIndexOf('-') + 1, KERNEL_VERSION_FULL.length)
-        if (currentVersion != version) {
+        var currentVersion = KERNEL_VERSION_FULL.substring(KERNEL_VERSION_FULL.lastIndexOf('-') + 1, KERNEL_VERSION_FULL.length)
+        // Remove 'v' from versions to compare!
+        currentVersion = currentVersion.substring(1, currentVersion.length)
+        Log.d("currentVersion: ", currentVersion)
+        val remoteVersion = version.substring(1, version.length)
+        Log.d("remoteVersion: ", remoteVersion)
+        if (currentVersion.toDouble() < remoteVersion.toDouble()) {
             runOnUiThread {
+                if (pref.getString("notification", "0").equals("0"))
+                    updateNotification()
                 val dialogListener = DialogInterface.OnClickListener { dialog, which ->
                     when (which) {
                         DialogInterface.BUTTON_POSITIVE -> {
@@ -251,7 +289,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                         val bodyOfJSON = response?.body()?.string()
                                         val gson = GsonBuilder().create()
                                         val codexData = gson.fromJson(bodyOfJSON, CodexInfo::class.java)
-                                        val url = codexData.downloads.url
+                                        val url: String
+                                        if(flag)
+                                            url = "Okay MIUI URL set!"
+                                        else
+                                            url = codexData.downloads.url
                                         runOnUiThread {
                                             DownloadTask(context, url, false, isPopup, progressBar2, percentage_textView)
                                         }
@@ -337,6 +379,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
             return false
         }
+    }
+
+    fun updateNotification() {
+
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+
+        val builder = NotificationCompat.Builder(this, "1")
+        builder.setSmallIcon(R.mipmap.ic_notify)
+        builder.setContentTitle("Kernel Update Available!")
+        builder.setContentText("Tap here to open the app and download the update")
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        builder.setContentIntent(pendingIntent)
+        builder.setAutoCancel(true)
+        val notificationChannel = NotificationChannel("1", "name", NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(notificationChannel)
+        notificationManager.notify(1, builder.build())
+
+        val editor = pref.edit()
+        editor.putString("notification", "1")
+        editor.apply()
+    }
+
+    override fun onDestroy() {
+        val editor = pref.edit()
+        editor.putString("notification", "0")
+        editor.apply()
+        super.onDestroy()
     }
 }
 
