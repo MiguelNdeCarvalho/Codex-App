@@ -16,4 +16,9 @@
         android:key="@string/key_auto_updates"
         android:summary="@string/auto_update_desc"
         android:title="@string/auto_update" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/key_miui_check"
+        android:summary="@string/miui_channel_desc"
+        android:title="@string/miui_channel" />
 </PreferenceScreen>

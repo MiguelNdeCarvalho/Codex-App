@@ -31,6 +31,8 @@
     <string name="key_check_updates">check_updates</string>
     <string name="key_wifi_only">wifi_only</string>
     <string name="key_auto_updates">auto_updates</string>
+    <string name="key_notification_check">Notify</string>
+    <string name="key_miui_check">MIUI</string>
 
     <!-- Strings related to Settings -->
     <string name="new_updates">Check Updates</string>
@@ -39,4 +41,6 @@
     <string name="wifi_only_desc">Updates will be downloaded only when a WiFi connection is available</string>
     <string name="auto_update">Auto Download Updates</string>
     <string name="auto_update_desc">Updates will be downloaded automatically</string>
+    <string name="miui_channel">MIUI Channel</string>
+    <string name="miui_channel_desc">If enabled, MIUI version of CodeX will be downloaded. If disabled, AOSP/LOS based CodeX will be downloaded.</string>
 </resources>

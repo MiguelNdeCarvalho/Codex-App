@@ -31,6 +31,7 @@ class DownloadTask(private val context: Context, downloadUrl: String, autoUpdate
 
     init {
         this.downloadUrl = downloadUrl
+        Log.d("MIUI Test: ", this.downloadUrl)
         downloadFileName = downloadUrl.substring(downloadUrl.lastIndexOf('/'), downloadUrl.length)//Create file name by picking download file name from URL
         Log.e(TAG, downloadFileName)
         if (autoUpdates) {
