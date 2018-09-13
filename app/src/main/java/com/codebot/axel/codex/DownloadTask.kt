@@ -22,12 +22,13 @@ import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-class DownloadTask(private val context: Context, downloadUrl: String, autoUpdates: Boolean, isPopup: Boolean, progressBar: ProgressBar, percentageTextView: TextView) {
+class DownloadTask(private val context: Context, downloadUrl: String, autoUpdates: Boolean, progressBar: ProgressBar, percentageTextView: TextView) {
 
     private var downloadUrl = ""
     private var downloadFileName = ""
     private var bar = progressBar
     private var percentage = percentageTextView
+    private val prompt_context = context
 
     init {
         this.downloadUrl = downloadUrl
@@ -36,21 +37,18 @@ class DownloadTask(private val context: Context, downloadUrl: String, autoUpdate
         Log.e(TAG, downloadFileName)
         if (autoUpdates) {
             if (!File(Environment.getExternalStorageDirectory().toString() + "/CodeX-builds" + downloadFileName).exists())
-                DownloadingTask(this).execute()
+                DownloadingTask(this, prompt_context).execute()
         } else {
             if (File(Environment.getExternalStorageDirectory().toString() + "/CodeX-builds" + downloadFileName).exists())
                 alertUser()
             else
-                DownloadingTask(this).execute()
+                DownloadingTask(this, prompt_context).execute()
         }
-        if (isPopup)
-            promptUserToFlash(context)
     }
 
     companion object {
         private val TAG = "Download Task"
-
-        private class DownloadingTask(private val downloadTask: DownloadTask) : AsyncTask<Void, String, Void>() {
+        private class DownloadingTask(private val downloadTask: DownloadTask, private val context: Context) : AsyncTask<Void, String, Void>() {
 
             internal var apkStorage: File? = null
             internal var outputFile: File? = null
@@ -69,6 +67,7 @@ class DownloadTask(private val context: Context, downloadUrl: String, autoUpdate
                 try {
                     if (outputFile != null) {
                         Toast.makeText(downloadTask.context, "Downloaded Successfully", Toast.LENGTH_SHORT).show()
+                        promptUserToFlash(context)
                     } else {
 
                         Handler().postDelayed({ }, 3000)
@@ -168,6 +167,28 @@ class DownloadTask(private val context: Context, downloadUrl: String, autoUpdate
                 downloadTask.percentage.text = percentage
                 downloadTask.bar.progress = values[0]!!.toInt()
             }
+
+            fun promptUserToFlash(context: Context) {
+                val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
+                    when (which) {
+                        DialogInterface.BUTTON_NEGATIVE -> {
+                            dialog.dismiss()
+                        }
+                        DialogInterface.BUTTON_POSITIVE -> {
+                            context.startActivity(Intent(context, FlashActivity::class.java))
+                        }
+                    }
+                }
+
+                val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogTheme))
+
+                builder.setTitle("Flash Kernel?")
+                        .setMessage("Package has been downloaded. Reboot and flash now?")
+                        .setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener)
+                        .setCancelable(false)
+                        .show()
+            }
         }
     }
 
@@ -188,7 +209,7 @@ class DownloadTask(private val context: Context, downloadUrl: String, autoUpdate
                     dialog.dismiss()
                 }
                 DialogInterface.BUTTON_POSITIVE -> {
-                    DownloadingTask(this).execute()
+                    DownloadingTask(this, prompt_context).execute()
                 }
             }
         }
@@ -198,28 +219,6 @@ class DownloadTask(private val context: Context, downloadUrl: String, autoUpdate
         builder.setTitle("Hang On!")
                 .setMessage("I've already found a same build on your device. You still want to continue downloading?")
                 .setPositiveButton("Yes, I'm crazy", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener)
-                .setCancelable(false)
-                .show()
-    }
-
-    fun promptUserToFlash(context: Context) {
-        val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
-            when (which) {
-                DialogInterface.BUTTON_NEGATIVE -> {
-                    dialog.dismiss()
-                }
-                DialogInterface.BUTTON_POSITIVE -> {
-                    context.startActivity(Intent(context, FlashActivity::class.java))
-                }
-            }
-        }
-
-        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogTheme))
-
-        builder.setTitle("Flash Kernel?")
-                .setMessage("Package has been downloaded. Reboot and flash now?")
-                .setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener)
                 .setCancelable(false)
                 .show()

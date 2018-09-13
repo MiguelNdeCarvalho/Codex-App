@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         progressBar2.visibility = View.INVISIBLE
         logo_imageView.scaleType = ImageView.ScaleType.FIT_XY
 
+        // Verifies if CodeX is absent on the device
         if (KERNEL_NAME != KERNEL) {
             alertUser()
         } else {
@@ -85,18 +86,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             toggle.syncState()
 
             nav_view.setNavigationItemSelectedListener(this)
-//        if (File("${Environment.getExternalStorageDirectory()}/CodeX-builds/CodeX.apk").exists()) {
-//            Shell.SU.run("su -c mount -o rw,remount /system")
-//            Shell.SU.run("su -c mv /sdcard/CodeX-builds/CodeX.apk /system/priv-app/CodeX/CodeX.apk")
-//            Shell.SU.run("su -c chmod 644 /system/priv-app/CodeX/CodeX.apk")
-//            Toast.makeText(this, "Copied", Toast.LENGTH_LONG).show()
-//        }
-
 
             val autoUpdates = preferences.getBoolean(getString(R.string.key_auto_updates), false)
 
             if (preferences.getBoolean(getString(R.string.key_check_updates), true))
-                checkForUpdates(this, true)
+                checkForUpdates(this)
 
             if (autoUpdates) {
                 val client = OkHttpClient()
@@ -117,7 +111,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             url = codexData.downloads.url
                         Log.d("Download URL: ", url)
                         runOnUiThread {
-                            DownloadTask(context, url, autoUpdates, false, progressBar2, percentage_textView)
+                            DownloadTask(context, url, autoUpdates, progressBar2, percentage_textView)
                         }
                     }
                 })
@@ -127,7 +121,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val mySnackbar = Snackbar.make(findViewById(R.id.home_coordinatorLayout), "Checking for kernel updates", Snackbar.LENGTH_LONG)
                 mySnackbar.view.setBackgroundColor(getColor(R.color.background))
                 mySnackbar.show()
-                checkForUpdates(this, true)
+                checkForUpdates(this)
             }
 
             xda_constraint_layout.setOnClickListener {
@@ -172,7 +166,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             else
                                 url = codexData.downloads.url
                             runOnUiThread {
-                                DownloadTask(context, url, false, false, progressBar2, percentage_textView)
+                                DownloadTask(context, url, false, progressBar2, percentage_textView)
                             }
                         }
                     })
@@ -219,7 +213,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .show()
     }
 
-    fun checkForUpdates(context: Context, isPopup: Boolean) {
+    fun checkForUpdates(context: Context) {
         println("URL: " + URL)
         if (isNetworkAvailable()) {
             if (preferences.getBoolean(getString(R.string.key_wifi_only), false)) {
@@ -236,7 +230,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             val gson = GsonBuilder().create()
                             val codexData = gson.fromJson(bodyOfJSON, CodexInfo::class.java)
                             val version = codexData.downloads.ver
-                            verifyUpdate(version, context, isPopup)
+                            verifyUpdate(version, context)
                         }
                     })
                 } else
@@ -254,7 +248,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val gson = GsonBuilder().create()
                         val codexData = gson.fromJson(bodyOfJSON, CodexInfo::class.java)
                         val version = codexData.downloads.ver
-                        verifyUpdate(version, context, isPopup)
+                        verifyUpdate(version, context)
                     }
                 })
             }
@@ -263,7 +257,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-    fun verifyUpdate(version: String, context: Context, isPopup: Boolean) {
+    fun verifyUpdate(version: String, context: Context) {
         var currentVersion = KERNEL_VERSION_FULL.substring(KERNEL_VERSION_FULL.lastIndexOf('-') + 1, KERNEL_VERSION_FULL.length)
         // Remove 'v' from versions to compare!
         currentVersion = currentVersion.substring(1, currentVersion.length)
@@ -295,7 +289,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                         else
                                             url = codexData.downloads.url
                                         runOnUiThread {
-                                            DownloadTask(context, url, false, isPopup, progressBar2, percentage_textView)
+                                            DownloadTask(context, url, false, progressBar2, percentage_textView)
                                         }
                                     }
                                 })

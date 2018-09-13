@@ -124,7 +124,7 @@ class AboutActivity : AppCompatActivity() {
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
                         if (!File(Environment.getExternalStorageDirectory().toString() + "/Codex-builds/", fileName).exists())
-                            DownloadTask(context, codexInfo.url, false, false, about_progressBar, about_percentage_textView)
+                            DownloadTask(context, codexInfo.url, false, about_progressBar, about_percentage_textView)
                         else {
                             if (!APP_VERSION.equals(codexInfo.version)) {
                                 verifyAndInstall(context, codexInfo)
