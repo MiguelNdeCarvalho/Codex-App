@@ -1,6 +1,5 @@
 package com.codebot.axel.codex
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -18,7 +17,6 @@ import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
@@ -29,7 +27,6 @@ import android.view.ContextThemeWrapper
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -43,7 +40,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val KERNEL = "CodeX"
     val KERNEL_VERSION_FULL = System.getProperty("os.version")
     val KERNEL_VERSION = KERNEL_VERSION_FULL.substring(KERNEL_VERSION_FULL.lastIndexOf('-') + 1, KERNEL_VERSION_FULL.length)
-    val KERNEL_NAME = KERNEL_VERSION_FULL.substring(KERNEL_VERSION_FULL.indexOf('-') + 1, KERNEL_VERSION_FULL.lastIndexOf('-'))
     val URL = "https://www.miguelndecarvalho.me/codex/whyred.json"
     lateinit var preferences: SharedPreferences
     lateinit var pref: SharedPreferences
@@ -66,7 +62,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         logo_imageView.scaleType = ImageView.ScaleType.FIT_XY
 
         // Verifies if CodeX is absent on the device
-        if (KERNEL_NAME != KERNEL) {
+        if (!KERNEL_VERSION_FULL.contains("CodeX")) {
             alertUser()
         } else {
             // Runtime.getRuntime().exec("su")
@@ -78,7 +74,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             isStoragePermissionGranted()
             device_textView.text = Html.fromHtml("<b>" + getString(R.string.device) + "</b>" + " " + Build.DEVICE)
             model_textView.text = Html.fromHtml("<b>" + getString(R.string.model) + "</b>" + " " + Build.MODEL)
-            kernel_textView.text = Html.fromHtml("<b>" + getString(R.string.kernel) + "</b>" + " " + KERNEL_NAME + " " + KERNEL_VERSION)
+            kernel_textView.text = Html.fromHtml("<b>" + getString(R.string.kernel) + "</b>" + " " + "CodeX" + " " + KERNEL_VERSION)
 
             val toggle = ActionBarDrawerToggle(
                     this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
